@@ -1,3 +1,5 @@
+This is the Fork version of Origianl SharpShooter with python3 supported
+
 ```
    _____ __                    _____ __                __           
   / ___// /_  ____ __________ / ___// /_  ____  ____  / /____  _____
